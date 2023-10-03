@@ -1,0 +1,99 @@
+﻿@page "/customers"
+@using BlazorApp.Client.Modals.CustomerModals;
+@using BlazorApp.Shared;
+@inject ICustomerService CustomerService
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+
+<h3>Customer Table</h3>
+
+<MudIconButton Icon="@Icons.Material.Filled.Create" OnClick="@(()=>CreateCustomer())" Title="New Customer"></MudIconButton>
+@if (CustomerList.Any())
+{
+    <MudTable Items="@CustomerList" Hover="true" Striped="true" Breakpoint="Breakpoint.Sm" Loading="@isLoading" LoadingProgressColor="Color.Info">
+        <ColGroup>
+        </ColGroup>
+        <HeaderContent>
+            <MudTh>Company Name</MudTh>
+            <MudTh>Contact Name</MudTh>
+            <MudTh>Address</MudTh>
+            <MudTh>City</MudTh>
+            <MudTh>Region</MudTh>
+            <MudTh>PostalCode</MudTh>
+            <MudTh>Country</MudTh>
+            <MudTh>Phone</MudTh>
+            <MudTh>Manage</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd>@context.CompanyName</MudTd>
+            <MudTd>@context.ContactName</MudTd>
+            <MudTd>@context.Address</MudTd>
+            <MudTd>@context.City</MudTd>
+            <MudTd>@context.Region</MudTd>
+            <MudTd>@context.PostalCode</MudTd>
+            <MudTd>@context.Country</MudTd>
+            <MudTd>@context.Phone</MudTd>
+            <MudTd>
+                <MudIconButton Icon="@Icons.Material.Filled.Edit" Variant="Variant.Text" Color="Color.Dark" OnClick="@((e) => EditCustomer(context))"></MudIconButton>
+                <MudIconButton Icon="@Icons.Material.Filled.Delete" Variant="Variant.Text" Color="Color.Error" OnClick="@((e) => DeleteCustomer(context.Id))"></MudIconButton>
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
+}
+
+@code {
+    #region Properties
+    public List<Customer> CustomerList { get; set; } = new List<Customer>();
+    public bool isLoading { get; set; } = false;
+    #endregion
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadCustomerTable();
+        StateHasChanged();
+    }
+
+    private async Task LoadCustomerTable()
+    {
+        isLoading = true;
+        var customerListReponse = await CustomerService.GetAllCustomersAsync();
+        if (customerListReponse.Success && customerListReponse.Data != null)
+            CustomerList = customerListReponse.Data;
+        isLoading = false;
+    }
+
+
+    #region CRUD Methods
+    async Task CreateCustomer()
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+        var dialog = await DialogService.ShowAsync<CreateCustomerModal>("Simple Dialog", options);
+        var result = await dialog.Result;
+        if (!result.Canceled && result.Data is bool reopen)
+        {
+            await LoadCustomerTable();
+            if (reopen)
+                await CreateCustomer();
+        }
+
+    }
+
+    async Task EditCustomer(Customer customer)
+    {
+        var editCustomerResponse = await CustomerService.UpdateCustomerAsync(customer);
+        if (editCustomerResponse.Success)
+        {
+
+        }
+    }
+
+    async Task DeleteCustomer(Guid customerId)
+    {
+        var deleteCustomerResponse = await CustomerService.DeleteCustomerAsync(customerId);
+        if (deleteCustomerResponse.Success)
+        {
+
+        }
+    }
+    #endregion
+}
