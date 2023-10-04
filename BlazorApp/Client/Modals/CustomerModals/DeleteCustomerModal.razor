@@ -1,0 +1,49 @@
+﻿@using BlazorApp.Shared;
+@inject ICustomerService CustomerService
+@inject ISnackbar Snackbar
+
+
+<MudDialog Class="custom-dialog" Style="position:absolute!important; right:0!important; height:100%!important; width:50%!important; max-width:1000px!important;">
+    <TitleContent>
+        <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="(()=>DeleteCustomer())">Delete</MudButton>
+        <MudButton OnClick="Cancel" Variant="Variant.Filled">Cancel</MudButton>
+        <MudDivider Style="margin-bottom:10px; margin-top:10px;" />
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.DeleteForever" Class="mr-6 mb-n1" />
+            Delete Customer
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudFocusTrap DefaultFocus="DefaultFocus">
+            <MudTextField Disabled="true" @bind-Value="customer.CompanyName" Required="true" RequiredError="Company Name is required" For="@(() => customer.CompanyName)" Variant="Variant.Outlined" />
+            <MudTextField Disabled="true" @bind-Value="customer.ContactName" Required="true" RequiredError="Contact Name is required" For="@(() => customer.ContactName)" Variant="Variant.Outlined" />
+            <MudTextField Disabled="true" @bind-Value="customer.Address" Required="true" RequiredError="Address is required" For="@(() => customer.Address)" Variant="Variant.Outlined" />
+            <MudTextField Disabled="true" @bind-Value="customer.City" Required="true" RequiredError="City is required" For="@(() => customer.City)" Variant="Variant.Outlined" />
+            <MudTextField Disabled="true" @bind-Value="customer.Region" Required="true" RequiredError="Region is required" For="@(() => customer.Region)" Variant="Variant.Outlined" />
+            <MudTextField Disabled="true" @bind-Value="customer.PostalCode" Required="true" RequiredError="PostalCode is required" For="@(() => customer.PostalCode)" Variant="Variant.Outlined" />
+            <MudTextField Disabled="true" @bind-Value="customer.Country" Required="true" RequiredError="Country is required" For="@(() => customer.Country)" Variant="Variant.Outlined" />
+            <MudTextField Disabled="true" @bind-Value="customer.Phone" Required="true" RequiredError="Phone is required" For="@(() => customer.Phone)" Variant="Variant.Outlined" />
+        </MudFocusTrap>
+    </DialogContent>
+</MudDialog>
+@code {
+
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Parameter] public Customer customer { get; set; }
+
+    DefaultFocus DefaultFocus { get; set; } = DefaultFocus.FirstChild;
+
+    private void Cancel() => MudDialog.Cancel();
+
+    private async Task DeleteCustomer()
+    {
+        var deleteCustomerResult = await CustomerService.DeleteCustomerAsync(customer.Id);
+        if (deleteCustomerResult != null)
+        {
+            Severity severityLevel = deleteCustomerResult.Success ? Severity.Success : Severity.Error;
+            Snackbar.Add(deleteCustomerResult.Message, severityLevel);
+            MudDialog.Close();
+        }
+    }
+}

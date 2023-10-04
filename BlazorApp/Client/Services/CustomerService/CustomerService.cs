@@ -31,8 +31,9 @@ namespace BlazorApp.Client.Services.CustomerService
 
         public async Task<ServiceResponse<bool>> DeleteCustomerAsync(Guid customerId)
         {
-            var result = await _http.GetFromJsonAsync<ServiceResponse<bool>>($"/api/customer/delete/{customerId}");
-            if (result == null)
+            var result = await _http.PostAsJsonAsync($"/api/customer/delete", customerId);
+            var resultContent = await result.Content.ReadFromJsonAsync<ServiceResponse<bool>>();
+            if (resultContent == null)
             {
                 return new ServiceResponse<bool>
                 {
@@ -40,7 +41,7 @@ namespace BlazorApp.Client.Services.CustomerService
                     Message = "Unable to contact server"
                 };
             }
-            return result;
+            return resultContent;
         }
 
         public async Task<ServiceResponse<List<Customer>>> GetAllCustomersAsync()
@@ -73,8 +74,9 @@ namespace BlazorApp.Client.Services.CustomerService
 
         public async Task<ServiceResponse<bool>> UpdateCustomerAsync(Customer customer)
         {
-            var result = await _http.GetFromJsonAsync<ServiceResponse<bool>>($"/api/customer/update/{customer}");
-            if (result == null)
+            var result = await _http.PostAsJsonAsync($"/api/customer/update", customer);
+            var resultContent = await result.Content.ReadFromJsonAsync<ServiceResponse<bool>>();
+            if (resultContent == null)
             {
                 return new ServiceResponse<bool>
                 {
@@ -82,7 +84,25 @@ namespace BlazorApp.Client.Services.CustomerService
                     Message = "Unable to contact server"
                 };
             }
+            return resultContent;
+        }
+
+        public async Task<ServiceResponse<PagedList<Customer>>> GetPagedCustomersAsync(int pageNumber, int pageSize)
+        {
+            var endpoint = $"/api/customer/getpaged?pageNumber={pageNumber}&pageSize={pageSize}";
+            var result = await _http.GetFromJsonAsync<ServiceResponse<PagedList<Customer>>>(endpoint);
+
+            if (result == null)
+            {
+                return new ServiceResponse<PagedList<Customer>>
+                {
+                    Success = false,
+                    Message = "Unable to contact server"
+                };
+            }
+
             return result;
         }
+
     }
 }

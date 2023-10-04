@@ -10,5 +10,6 @@ namespace BlazorApp.Client.Services.CustomerService
         Task<ServiceResponse<bool>> CreateCustomerAsync(Customer customer);
         Task<ServiceResponse<bool>> DeleteCustomerAsync(Guid customerId);
         Task<ServiceResponse<bool>> UpdateCustomerAsync(Customer customer);
+        Task<ServiceResponse<PagedList<Customer>>> GetPagedCustomersAsync(int pageNumber, int pageSize);
     }
 }

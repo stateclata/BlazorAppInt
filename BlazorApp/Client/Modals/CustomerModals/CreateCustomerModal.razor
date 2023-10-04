@@ -11,19 +11,19 @@
         <MudDivider Style="margin-bottom:10px; margin-top:10px;" />
         <MudText Typo="Typo.h6">
             <MudIcon Icon="@Icons.Material.Filled.Add" Class="mr-6 mb-n1" />
-            New Client
+            New Customer
         </MudText>
     </TitleContent>
     <DialogContent>
         <MudFocusTrap DefaultFocus="DefaultFocus">
-            <MudTextField @bind-Value="customer.CompanyName" Required="true" RequiredError="Company Name is required" For="@(() => customer.CompanyName)" Variant="Variant.Outlined" />
-            <MudTextField @bind-Value="customer.ContactName" Required="true" RequiredError="Contact Name is required" For="@(() => customer.ContactName)" Variant="Variant.Outlined" />
-            <MudTextField @bind-Value="customer.Address" Required="true" RequiredError="Address is required" For="@(() => customer.Address)" Variant="Variant.Outlined" />
-            <MudTextField @bind-Value="customer.City" Required="true" RequiredError="City is required" For="@(() => customer.City)" Variant="Variant.Outlined" />
-            <MudTextField @bind-Value="customer.Region" Required="true" RequiredError="Region is required" For="@(() => customer.Region)" Variant="Variant.Outlined" />
-            <MudTextField @bind-Value="customer.PostalCode" Required="true" RequiredError="PostalCode is required" For="@(() => customer.PostalCode)" Variant="Variant.Outlined" />
-            <MudTextField @bind-Value="customer.Country" Required="true" RequiredError="Country is required" For="@(() => customer.Country)" Variant="Variant.Outlined" />
-            <MudTextField @bind-Value="customer.Phone" Required="true" RequiredError="Phone is required" For="@(() => customer.Phone)" Variant="Variant.Outlined" />
+            <MudTextField Label="Company Name" @bind-Value="customer.CompanyName" Required="true" RequiredError="Company Name is required" For="@(() => customer.CompanyName)" Variant="Variant.Outlined" />
+            <MudTextField Label="Contant Name" @bind-Value="customer.ContactName" Required="true" RequiredError="Contact Name is required" For="@(() => customer.ContactName)" Variant="Variant.Outlined" />
+            <MudTextField Label="Address" @bind-Value="customer.Address" Required="true" RequiredError="Address is required" For="@(() => customer.Address)" Variant="Variant.Outlined" />
+            <MudTextField Label="City" @bind-Value="customer.City" Required="true" RequiredError="City is required" For="@(() => customer.City)" Variant="Variant.Outlined" />
+            <MudTextField Label="Region" @bind-Value="customer.Region" Required="true" RequiredError="Region is required" For="@(() => customer.Region)" Variant="Variant.Outlined" />
+            <MudTextField Label="PostalCode" @bind-Value="customer.PostalCode" Required="true" RequiredError="PostalCode is required" For="@(() => customer.PostalCode)" Variant="Variant.Outlined" />
+            <MudTextField Label="Country" @bind-Value="customer.Country" Required="true" RequiredError="Country is required" For="@(() => customer.Country)" Variant="Variant.Outlined" />
+            <MudTextField Label="Phone" @bind-Value="customer.Phone" Required="true" RequiredError="Phone is required" For="@(() => customer.Phone)" Variant="Variant.Outlined" />
         </MudFocusTrap>
     </DialogContent>
 </MudDialog>
@@ -40,6 +40,18 @@
 
     private async Task CreateItem(bool reOpen)
     {
+        if(string.IsNullOrEmpty(customer.CompanyName) ||
+        string.IsNullOrEmpty(customer.ContactName)||
+        string.IsNullOrEmpty(customer.Address)||
+        string.IsNullOrEmpty(customer.City)||
+        string.IsNullOrEmpty(customer.Region)||
+        string.IsNullOrEmpty(customer.PostalCode)||
+        string.IsNullOrEmpty(customer.Country)||
+        string.IsNullOrEmpty(customer.Phone))
+        {
+            Snackbar.Add("Please fill in the fields", Severity.Warning);
+            return;
+        }
         var createCustomerResult = await CustomerService.CreateCustomerAsync(customer);
         if (createCustomerResult != null)
         {

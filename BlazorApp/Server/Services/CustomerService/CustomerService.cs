@@ -38,7 +38,7 @@ namespace BlazorApp.Server.Services.CustomerService
                 return new ServiceResponse<bool>
                 {
                     Success = true,
-                    Message = "Customer successfully created"
+                    Message = "Customer created successfully"
                 };
             }
             catch
@@ -73,7 +73,7 @@ namespace BlazorApp.Server.Services.CustomerService
 
                 return new ServiceResponse<bool>
                 {
-                    Message = "Customer successfully deleted"
+                    Message = "Customer deleted successfully"
                 };
             }
             catch
@@ -110,6 +110,53 @@ namespace BlazorApp.Server.Services.CustomerService
             catch
             {
                 return new ServiceResponse<List<Customer>>
+                {
+                    Success = false,
+                    Message = "Something went wrong"
+                };
+            }
+        }
+
+        /// <summary>
+        /// Method that returns a paged list containing selected entries in the Customer table of the database
+        /// </summary>
+        public async Task<ServiceResponse<PagedList<Customer>>> GetPagedCustomersAsync(int pageNumber, int pageSize)
+        {
+            try
+            {
+                var totalCustomers = await _context.Customers.CountAsync();
+
+                var customerList = await _context.Customers
+                    .OrderBy(c => c.Id)
+                    .Skip((pageNumber - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToListAsync();
+
+                var totalPages = (int)Math.Ceiling((double)totalCustomers / pageSize);
+
+                if (customerList.Any())
+                {
+                    var response = new ServiceResponse<PagedList<Customer>>();
+                    response.Data = new PagedList<Customer>
+                    {
+                        Items = customerList,
+                        PageSize = pageSize,
+                        PageNumber = pageNumber,
+                        TotalPages = totalPages
+                    };
+
+
+                    return response;
+                }
+
+                return new ServiceResponse<PagedList<Customer>>
+                {
+                    Message = "Customers table is empty"
+                };
+            }
+            catch
+            {
+                return new ServiceResponse<PagedList<Customer>>
                 {
                     Success = false,
                     Message = "Something went wrong"
@@ -157,7 +204,10 @@ namespace BlazorApp.Server.Services.CustomerService
         {
             try
             {
-                var customerToUpdate = await _context.Customers.FirstOrDefaultAsync(c => c.Id == customer.Id);
+                var customerToUpdate = await _context.Customers
+                    .AsNoTracking() // Detach the entity from the context
+                    .FirstOrDefaultAsync(c => c.Id == customer.Id);
+
                 if (customerToUpdate == null)
                 {
                     return new ServiceResponse<bool>
@@ -167,23 +217,24 @@ namespace BlazorApp.Server.Services.CustomerService
                     };
                 }
 
-                customerToUpdate = customer;
-                _context.Customers.Update(customerToUpdate);
+                _context.Entry(customerToUpdate).CurrentValues.SetValues(customer);
+                _context.Update(customerToUpdate);
                 await _context.SaveChangesAsync();
+
                 return new ServiceResponse<bool>
                 {
                     Message = "Customer updated successfully"
                 };
-
             }
-            catch
+            catch (Exception ex)
             {
                 return new ServiceResponse<bool>
                 {
                     Success = false,
-                    Message = "Something went wrong"
+                    Message = "An error occurred while updating the customer."
                 };
             }
         }
+
     }
 }
