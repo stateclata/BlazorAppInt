@@ -2,6 +2,7 @@ using BlazorApp.Shared.Utilities;
 using BlazorApp.Server.Services.UserService;
 using BlazorApp.Shared;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BlazorApp.Server.Controllers
 {
@@ -16,7 +17,7 @@ namespace BlazorApp.Server.Controllers
             _customerService = customerService;
         }
 
-        [HttpGet("getall")]
+        [HttpGet("getall"),Authorize]
         public async Task<ActionResult<ServiceResponse<List<Customer>>>> GetAllCustomersAsync()
         {
             var response = await _customerService.GetAllCustomersAsync();
@@ -27,7 +28,7 @@ namespace BlazorApp.Server.Controllers
             return Ok(response);
         }
 
-        [HttpGet("getpaged")]
+        [HttpGet("getpaged"),Authorize]
         public async Task<ActionResult<ServiceResponse<PagedList<Customer>>>> GetPagedCustomersAsync(int pageNumber = 1, int pageSize = 10)
         {
             var response = await _customerService.GetPagedCustomersAsync(pageNumber, pageSize);
@@ -38,7 +39,7 @@ namespace BlazorApp.Server.Controllers
             return Ok(response);
         }
 
-        [HttpGet("get/{customerId}")]
+        [HttpGet("get/{customerId}"),Authorize]
         public async Task<ActionResult<ServiceResponse<Customer>>> GetCustomerByID(Guid customerID)
         {
             var response = await _customerService.GetCustomerByIDAsync(customerID);
@@ -49,7 +50,7 @@ namespace BlazorApp.Server.Controllers
             return Ok(response);
         }
 
-        [HttpPost("create")]
+        [HttpPost("create"),Authorize]
         public async Task<ActionResult<ServiceResponse<bool>>> CreateCustomerAsync(Customer customer)
         {
             var response = await _customerService.CreateCustomerAsync(customer);
@@ -60,7 +61,7 @@ namespace BlazorApp.Server.Controllers
             return Ok(response);
         }
 
-        [HttpPost("delete")]
+        [HttpPost("delete"), Authorize]
         public async Task<ActionResult<ServiceResponse<bool>>> DeleteCustomerAsync([FromBody] Guid customerId)
         {
             var response = await _customerService.DeleteCustomerAsync(customerId);
@@ -71,7 +72,7 @@ namespace BlazorApp.Server.Controllers
             return Ok(response);
         }
 
-        [HttpPost("update")]
+        [HttpPost("update"),Authorize]
         public async Task<ActionResult<ServiceResponse<bool>>> UpdateCustomerAsync(Customer customer)
         {
             var response = await _customerService.UpdateCustomerAsync(customer);

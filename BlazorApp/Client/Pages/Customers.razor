@@ -4,77 +4,142 @@
 @inject ICustomerService CustomerService
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
+@attribute [Authorize]
 
 <h3>Customer Table</h3>
 
-<div style="display: flex; justify-content: flex-end;">
-    <MudButton OnClick="@(()=>CreateCustomer())" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.PersonAdd" Color="Color.Primary">New Customer</MudButton>
-</div>
+@if (isPageLoading)
+{
+    <LoadingPage />
+}
+else
+{
+    <div style="display: flex; justify-content: flex-end;">
+        <MudButton OnClick="@(()=>CreateCustomer())" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.PersonAdd" Color="Color.Primary">New Customer</MudButton>
+    </div>
 
-<div class="col-10 mx-auto" style="margin-top:2%; margin-bottom:5%;">
-    @if (CustomerList.Any())
-    {
-        <div class="col-1" style="margin-bottom:2%;">
-            <select @onchange="HandlePageSizeChange" class="form-control" style="text-align:center">
-                <option value="10">10</option>
-                <option value="20">20</option>
-                <option value="50">50</option>
-                <option value="100">100</option>
-            </select>
-        </div>
-
-        <MudTable Items="@CustomerList" Hover="true" Striped="true" Breakpoint="Breakpoint.Sm" Loading="@isLoading" LoadingProgressColor="Color.Info">
-            <ColGroup>
-            </ColGroup>
-            <HeaderContent>
-                <MudTh>Company Name</MudTh>
-                <MudTh>Contact Name</MudTh>
-                <MudTh>Address</MudTh>
-                <MudTh>City</MudTh>
-                <MudTh>Region</MudTh>
-                <MudTh>PostalCode</MudTh>
-                <MudTh>Country</MudTh>
-                <MudTh>Phone</MudTh>
-                <MudTh>Manage</MudTh>
-            </HeaderContent>
-            <RowTemplate>
-                <MudTd>@context.CompanyName</MudTd>
-                <MudTd>@context.ContactName</MudTd>
-                <MudTd>@context.Address</MudTd>
-                <MudTd>@context.City</MudTd>
-                <MudTd>@context.Region</MudTd>
-                <MudTd>@context.PostalCode</MudTd>
-                <MudTd>@context.Country</MudTd>
-                <MudTd>@context.Phone</MudTd>
-                <MudTd>
-                    <MudIconButton Icon="@Icons.Material.Filled.Edit" Variant="Variant.Text" Color="Color.Dark" OnClick="@((e) => EditCustomer(context))"></MudIconButton>
-                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Variant="Variant.Text" Color="Color.Error" OnClick="@((e) => DeleteCustomer(context))"></MudIconButton>
-                </MudTd>
-            </RowTemplate>
-        </MudTable>
-        <div class="col-2 mx-auto" style="margin-top:1%;">
-            <MudIconButton Disabled="@IsFirstPage" Icon="@Icons.Material.Filled.KeyboardDoubleArrowLeft" Variant="Variant.Filled" Color="Color.Dark" OnClick="@(()=>GetPagedCustomerTable(1,10))"></MudIconButton>
-            <MudIconButton Disabled="@IsFirstPage" Icon="@Icons.Material.Filled.KeyboardArrowLeft" Variant="Variant.Filled" Color="Color.Dark" OnClick="@(()=>GetPagedCustomerTable(--CurrentPage,10))"></MudIconButton>
-            <MudIconButton Disabled="@IsLastPage" Icon="@Icons.Material.Filled.KeyboardArrowRight" Variant="Variant.Filled" Color="Color.Dark" OnClick="@(()=>GetPagedCustomerTable(++CurrentPage,10))"></MudIconButton>
-            <MudIconButton Disabled="@IsLastPage" Icon="@Icons.Material.Filled.KeyboardDoubleArrowRight" Variant="Variant.Filled" Color="Color.Dark" OnClick="@(()=>GetPagedCustomerTable(TotalPages,10))"></MudIconButton>
-        </div>
-    }
-</div>
-
+    <div class="col-10 mx-auto" style="margin-top:2%; margin-bottom:5%;">
+        @if (CustomerList.Any())
+        {
+            <div class="row mt-2">
+                <span>Entries per page:</span>
+                <div class="col-1" style="margin-bottom:2%;">
+                    <select @onchange="HandlePageSizeChange" class="form-control" style="text-align:center">
+                        <option value="10">10</option>
+                        <option value="20">20</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                </div>
+            </div>
+            <MudTable Items="@CustomerList" Hover="true" Striped="true" Breakpoint="Breakpoint.Sm" Loading="@isLoading" LoadingProgressColor="Color.Info">
+                <ColGroup>
+                </ColGroup>
+                <HeaderContent>
+                    <MudTh>Company Name</MudTh>
+                    <MudTh>Contact Name</MudTh>
+                    <MudTh>Address</MudTh>
+                    <MudTh>City</MudTh>
+                    <MudTh>Region</MudTh>
+                    <MudTh>PostalCode</MudTh>
+                    <MudTh>Country</MudTh>
+                    <MudTh>Phone</MudTh>
+                    <MudTh>Manage</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd>@context.CompanyName</MudTd>
+                    <MudTd>@context.ContactName</MudTd>
+                    <MudTd>@context.Address</MudTd>
+                    <MudTd>@context.City</MudTd>
+                    <MudTd>@context.Region</MudTd>
+                    <MudTd>@context.PostalCode</MudTd>
+                    <MudTd>@context.Country</MudTd>
+                    <MudTd>@context.Phone</MudTd>
+                    <MudTd>
+                        <MudIconButton Icon="@Icons.Material.Filled.Edit" Variant="Variant.Text" Color="Color.Dark" OnClick="@((e) => EditCustomer(context))"></MudIconButton>
+                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Variant="Variant.Text" Color="Color.Error" OnClick="@((e) => DeleteCustomer(context))"></MudIconButton>
+                    </MudTd>
+                </RowTemplate>
+            </MudTable>
+            <div class="col-2 mx-auto" style="margin-top:1%;">
+                <MudIconButton Disabled="@IsFirstPage" Icon="@Icons.Material.Filled.KeyboardDoubleArrowLeft" Variant="Variant.Filled" Color="Color.Dark" OnClick="@(()=>GetPagedCustomerTable(1,10))"></MudIconButton>
+                <MudIconButton Disabled="@IsFirstPage" Icon="@Icons.Material.Filled.KeyboardArrowLeft" Variant="Variant.Filled" Color="Color.Dark" OnClick="@(()=>GetPagedCustomerTable(--CurrentPage,10))"></MudIconButton>
+                <MudIconButton Disabled="@IsLastPage" Icon="@Icons.Material.Filled.KeyboardArrowRight" Variant="Variant.Filled" Color="Color.Dark" OnClick="@(()=>GetPagedCustomerTable(++CurrentPage,10))"></MudIconButton>
+                <MudIconButton Disabled="@IsLastPage" Icon="@Icons.Material.Filled.KeyboardDoubleArrowRight" Variant="Variant.Filled" Color="Color.Dark" OnClick="@(()=>GetPagedCustomerTable(TotalPages,10))"></MudIconButton>
+            </div>
+        }
+    </div>
+}
 
 @code {
     #region Properties
     public List<Customer> CustomerList { get; set; } = new List<Customer>();
     public bool isLoading { get; set; } = false;
+    public bool isPageLoading { get; set; } = true;
     public int currentPage { get; set; } = 1;
-    public int pageSize { get; set; } = 10;
     #endregion
 
     protected override async Task OnInitializedAsync()
     {
+        isPageLoading = true;
         await GetPagedCustomerTable(1, 10);
         StateHasChanged();
+        isPageLoading = false;
     }
+
+    private async Task LoadCustomerTable()
+    {
+        isLoading = true;
+        var customerListReponse = await CustomerService.GetAllCustomersAsync();
+        if (customerListReponse.Success && customerListReponse.Data != null)
+            CustomerList = customerListReponse.Data;
+        isLoading = false;
+    }
+
+
+    #region CRUD Methods
+    async Task CreateCustomer()
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+        var dialog = await DialogService.ShowAsync<CreateCustomerModal>("Simple Dialog", options);
+        var result = await dialog.Result;
+        if (!result.Canceled && result.Data is bool reopen)
+        {
+            await GetPagedCustomerTable(CurrentPage, PageSize);
+            if (reopen)
+                await CreateCustomer();
+        }
+
+    }
+
+    async Task EditCustomer(Customer customer)
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+        var parameters = new DialogParameters { ["customer"] = customer };
+        var dialog = await DialogService.ShowAsync<EditCustomerModal>("Simple Dialog", parameters, options);
+        var result = await dialog.Result;
+        await GetPagedCustomerTable(CurrentPage, PageSize);
+    }
+
+    async Task DeleteCustomer(Customer customer)
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+        var parameters = new DialogParameters { ["customer"] = customer };
+        var dialog = await DialogService.ShowAsync<DeleteCustomerModal>("Simple Dialog", parameters, options);
+        var result = await dialog.Result;
+        await GetPagedCustomerTable(CurrentPage, PageSize);
+    }
+    #endregion
+
+    #region Pagination Buttons
+    private PagedList<Customer> PagedCustomerList { get; set; } = new PagedList<Customer>();
+    public int PageSize { get; set; } = 10;
+    public int CurrentPage { get; set; } = 1;
+    public int TotalPages { get; set; } = 1;
+    private bool IsFirstPage => CurrentPage == 1;
+    private bool IsLastPage => CurrentPage >= TotalPages;
+    private bool IsPreviousPage => CurrentPage > 1;
+    private bool IsNextPage => CurrentPage < TotalPages;
 
     private async Task HandlePageSizeChange(ChangeEventArgs e)
     {
@@ -99,64 +164,7 @@
                 CustomerList = customerListReponse.Data.Items;
 
         }
-
         isLoading = false;
     }
-
-
-    private async Task LoadCustomerTable()
-    {
-        isLoading = true;
-        var customerListReponse = await CustomerService.GetAllCustomersAsync();
-        if (customerListReponse.Success && customerListReponse.Data != null)
-            CustomerList = customerListReponse.Data;
-        isLoading = false;
-    }
-
-
-    #region CRUD Methods
-    async Task CreateCustomer()
-    {
-        var options = new DialogOptions { CloseOnEscapeKey = true };
-        var dialog = await DialogService.ShowAsync<CreateCustomerModal>("Simple Dialog", options);
-        var result = await dialog.Result;
-        if (!result.Canceled && result.Data is bool reopen)
-        {
-            await GetPagedCustomerTable(CurrentPage, 10);
-            if (reopen)
-                await CreateCustomer();
-        }
-
-    }
-
-    async Task EditCustomer(Customer customer)
-    {
-        var options = new DialogOptions { CloseOnEscapeKey = true };
-        var parameters = new DialogParameters { ["customer"] = customer };
-        var dialog = await DialogService.ShowAsync<EditCustomerModal>("Simple Dialog", parameters, options);
-        var result = await dialog.Result;
-        await GetPagedCustomerTable(CurrentPage, 10);
-    }
-
-    async Task DeleteCustomer(Customer customer)
-    {
-        var options = new DialogOptions { CloseOnEscapeKey = true };
-        var parameters = new DialogParameters { ["customer"] = customer };
-        var dialog = await DialogService.ShowAsync<DeleteCustomerModal>("Simple Dialog", parameters, options);
-        var result = await dialog.Result;
-        await GetPagedCustomerTable(CurrentPage, 10);
-    }
-    #endregion
-
-    #region Pagination Buttons
-    private PagedList<Customer> PagedCustomerList { get; set; } = new PagedList<Customer>();
-    public int PageSize { get; set; } = 10;
-    public int CurrentPage { get; set; } = 1;
-    public int TotalPages { get; set; } = 1;
-    private bool IsFirstPage => CurrentPage == 1;
-    private bool IsLastPage => CurrentPage >= TotalPages;
-    private bool IsPreviousPage => CurrentPage > 1;
-    private bool IsNextPage => CurrentPage < TotalPages;
-
     #endregion
 }

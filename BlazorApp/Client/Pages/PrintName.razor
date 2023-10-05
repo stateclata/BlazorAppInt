@@ -1,0 +1,45 @@
+﻿@page "/print"
+@using BlazorApp.Client.Utilities;
+@using BlazorApp.Shared;
+@inject ISnackbar Snackbar
+@attribute [Authorize]
+
+<div style="display:flex; justify-content:space-around;">
+    <MudCard>
+        <MudCardContent>
+            <MudItem>
+                <MudTextField @bind-Value="employee.Name" Label="Enter employee name" />
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(()=>PrintEmployee())" Style="margin-top:5%">Print Employee</MudButton>
+            </MudItem>
+        </MudCardContent>
+    </MudCard>
+
+    <MudCard>
+        <MudCardContent>
+            <MudItem>
+                <MudTextField @bind-Value="manager.Name" Label="Enter manager name" />
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(()=>PrintManager())" Style="margin-top:5%">Print Manager</MudButton>
+            </MudItem>
+        </MudCardContent>
+    </MudCard>
+</div>
+
+
+
+
+@code {
+    public Employee employee { get; set; } = new Employee();
+    public Manager manager { get; set; } = new Manager();
+
+    public void PrintEmployee()
+    {
+        PrintPersonsName printer = new PrintPersonsName(Snackbar);
+        printer.PrintName(employee);
+    }
+
+    public void PrintManager()
+    {
+        PrintPersonsName printer = new PrintPersonsName(Snackbar);
+        printer.PrintName(manager);
+    }
+}

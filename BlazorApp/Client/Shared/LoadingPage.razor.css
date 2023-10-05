@@ -1,0 +1,106 @@
+﻿.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    flex-direction: column;
+}
+
+.text-wrapper {
+    text-align: center;
+}
+
+.success-message {
+    color: green;
+    font-size: 18px;
+}
+
+.invoice-mark {
+    font-weight: bold;
+}
+
+.qr-code-wrapper {
+    width: 200px;
+    height: 200px;
+    text-align: center;
+}
+
+.qr-code-image {
+    width: 100%;
+    height: 100%;
+}
+
+/****loading and success animation ****/
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-top-color: #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: auto;
+}
+
+.loader {
+    border: 8px solid rgba(0, 0, 0, 0.1);
+    border-top: 8px solid #3498db;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: auto;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.success-animation {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.success-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: #27ae60;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: success-animation 0.5s ease-in-out;
+    margin-bottom: 5px;
+}
+
+@keyframes success-animation {
+    0% {
+        transform: scale(0);
+    }
+
+    70% {
+        transform: scale(1.3);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.tick-mark {
+    font-size: 40px;
+    color: #ffffff;
+}
+
+.qr-code-image {
+    width: 200px;
+    height: 200px;
+}

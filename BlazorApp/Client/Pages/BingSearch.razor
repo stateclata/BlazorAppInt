@@ -1,0 +1,103 @@
+﻿@page "/bing"
+@using BlazorApp.Shared;
+@inject ISnackbar Snackbar
+@inject IBingService BingService
+@attribute [Authorize]
+
+
+<h3>Bing Real Time Search Suggestions</h3>
+
+<div class="input-group">
+    <input @bind-value="searchText"
+    @bind-value:event="oninput"
+           type="search" list="products"
+    @onkeyup="HandleSearch"
+           class="form-control"
+           placeholder="Search..."
+    @ref=searchInput />
+    <datalist id="products">
+        @if (MapPointsReal.resourceSets != null)
+        {
+            @foreach (var suggestion in MapPointsReal.resourceSets)
+            {
+                foreach (var res in suggestion.resources)
+                {
+                    <option>@res.name</option>
+                }
+            }
+        }
+    </datalist>
+</div>
+
+<div class="card-container">
+    @if (MapPoints != null && MapPoints.resourceSets != null)
+    {
+        foreach (var point in MapPoints.resourceSets)
+        {
+            foreach (var resource in point.resources)
+            {
+                <MudCard class="custom-card">
+                    <MudCardContent>country/Region: @resource.name</MudCardContent>
+                    <MudCardContent>Coordinates:</MudCardContent>
+                    @foreach (var cor in resource.point.coordinates)
+                    {
+                        <MudCardContent>@cor</MudCardContent>
+                    }
+                </MudCard>
+            }
+        }
+    }
+</div>
+
+@code {
+    private string searchText = string.Empty;
+    public BingMapResponse MapPointsReal { get; set; } = new BingMapResponse();
+    public BingMapResponse MapPoints { get; set; } = new BingMapResponse();
+    protected ElementReference searchInput;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await searchInput.FocusAsync();
+        }
+    }
+
+    public async Task HandleSearch(KeyboardEventArgs args)
+    {
+        if (args.Key == null || args.Key.Equals("Enter"))
+        {
+            var result = await BingService.SearchBingAsync(searchText);
+            if (result.Success && result.Data != null)
+                MapPoints = result.Data;
+            else
+                Snackbar.Add(result.Message, Severity.Error);
+        }
+        else if (searchText.Length > 1)
+        {
+            var result = await BingService.SearchBingAsync(searchText);
+            if (result.Success && result.Data != null)
+                MapPointsReal = result.Data;
+            else
+                Snackbar.Add(result.Message, Severity.Error);
+
+            StateHasChanged();
+        }
+    }
+}
+
+<style>
+    .card-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 2%;
+    }
+
+    .custom-card {
+        flex: 1 1 calc(33.333% - 20px);
+        min-width: 250px;
+        background-color: #edcec5;
+    }
+
+</style>

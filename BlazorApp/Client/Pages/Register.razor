@@ -1,0 +1,40 @@
+﻿@page "/register"
+@inject ISnackbar Snackbar
+@inject IUserService UserService
+
+
+<h4>Register</h4>
+
+<EditForm Model="user" OnValidSubmit="HandleRegistration">
+    <DataAnnotationsValidator />
+    <div class="mb-3 col-3">
+        <label for="email">Email</label>
+        <InputText id="email" @bind-Value="user.Email" class="form-control" />
+        <ValidationMessage For="@(()=>user.Email)" />
+    </div>
+    <div class="mb-3 col-3">
+        <label for="email">Password</label>
+        <InputText id="password" @bind-Value="user.Password" class="form-control" type="password" />
+        <ValidationMessage For="@(()=>user.Password)" />
+    </div>
+    <div class="mb-3 col-3">
+        <label for="email">Password Confirmation</label>
+        <InputText id="passwordConfirm" @bind-Value="user.PasswordConfirm" class="form-control" type="password" />
+        <ValidationMessage For="@(()=>user.PasswordConfirm)" />
+    </div>
+    <button type="submit" class="btn btn-primary">Register</button>
+</EditForm>
+
+@code {
+    UserRegister user = new UserRegister();
+
+    private async Task HandleRegistration()
+    {
+        var result = await UserService.Register(user);
+        if (result != null)
+        {
+            Severity severityLevel = result.Success ? Severity.Success : Severity.Error;
+            Snackbar.Add(result.Message, severityLevel);
+        }
+    }
+}

@@ -1,0 +1,44 @@
+﻿@page "/login"
+@inject IUserService UserService
+@inject ISnackbar Snackbar
+@inject ILocalStorageService LocalStorage
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<h3>Login</h3>
+
+<EditForm Model="user" OnValidSubmit="HandleLogin">
+    <DataAnnotationsValidator />
+    <div class="mb-3 col-3">
+        <label for="email">Email</label>
+        <InputText id="email" @bind-Value="user.Email" class="form-control" />
+        <ValidationMessage For="@(()=>user.Email)" />
+    </div>
+    <div class="mb-3 col-3">
+        <label for="email">Password</label>
+        <InputText id="password" @bind-Value="user.Password" class="form-control" type="password" />
+        <ValidationMessage For="@(()=>user.Password)" />
+    </div>
+    <button type="submit" class="btn btn-primary">Login</button>
+</EditForm>
+
+@code {
+    private UserLogin user = new UserLogin();
+
+    private async Task HandleLogin()
+    {
+        var result = await UserService.Login(user);
+        if (result != null)
+        {
+            Severity severityLevel = result.Success ? Severity.Success : Severity.Error;
+            Snackbar.Add(result.Message, severityLevel);
+
+            if(result.Success && !string.IsNullOrEmpty(result.Data))
+            {
+                await LocalStorage.SetItemAsync("authToken", result.Data);
+                await AuthenticationStateProvider.GetAuthenticationStateAsync();
+                NavigationManager.NavigateTo("");
+            }
+        }
+    }
+}

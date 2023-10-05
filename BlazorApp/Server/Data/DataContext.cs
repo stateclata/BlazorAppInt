@@ -1,4 +1,5 @@
 ﻿using BlazorApp.Shared;
+using BlazorApp.Shared.UserManagement;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 
@@ -16,6 +17,7 @@ namespace BlazorAADE.Server.Data
 
         }
         public DbSet<Customer> Customers { get; set; }
+        public DbSet<User> Users { get; set; }
 
     }
 }
