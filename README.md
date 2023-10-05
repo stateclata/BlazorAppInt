@@ -1,13 +1,12 @@
-# Blazor WASM application for Epsilon Interview #
+Blazor WebAssembly Application for Epsilon Interview
 
+Below is a list of the website's functionalities:
 
-
-    Below is a list of all the website's usages:
-• Customer.razor page hosting a grid with all customers with server side paging & CRUD Operations on the Customer Table
-• A simple Class on the Client Side that displays the object's name in case the object's class is 'Employee' or 'Manager'
-• Identity Authentication has been achieved using Jwt Tokens in HTTP headers (more in CustomAuthStateProvider.cs on the Client Side & the token can be found on the Server Side inside "appsettings.json").
-• All Server calls are being handled by services on the Client Side making an http call to the Server Controller and all tasks are handled by the respective Server Services.
-• MudBlazor has been used for most of the UI Components.
-• .Net 6 (LTS) has been used as requested.
-• SQL Server w/ Entity Framework Core has been used for the database.
-• Bootstrap was included in MudBlazor.
+    Customer Page: Displays a grid of all customers with server-side paging and supports CRUD operations on the Customer table.
+    Client-Side Class: Implements logic to display object names based on their class, identifying whether they are instances of 'Employee' or 'Manager'.
+    Identity Authentication: Implemented using JWT tokens sent in HTTP headers. For detailed implementation, refer to CustomAuthStateProvider.cs on the Client Side. The token is stored in the Server Side's appsettings.json.
+    Server Calls: All server calls are handled by services on the Client Side. These services make HTTP requests to the Server Controller, and corresponding tasks are managed by the respective Server Services.
+    UI Components: Utilizes MudBlazor, a component library, for most of the User Interface elements.
+    Technology Stack: Developed with .NET 6 (LTS) as per the requested specifications.
+    Database: Utilizes SQL Server with Entity Framework Core for database operations.
+    Bootstrap Integration: Bootstrap framework is included within MudBlazor for styling and layout purposes.
