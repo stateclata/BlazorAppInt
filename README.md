@@ -2,7 +2,7 @@
 
 
 
-Below is a list of all the website's usages:
+    Below is a list of all the website's usages:
 • Customer.razor page hosting a grid with all customers with server side paging & CRUD Operations on the Customer Table
 • A simple Class on the Client Side that displays the object's name in case the object's class is 'Employee' or 'Manager'
 • Identity Authentication has been achieved using Jwt Tokens in HTTP headers (more in CustomAuthStateProvider.cs on the Client Side & the token can be found on the Server Side inside "appsettings.json").
